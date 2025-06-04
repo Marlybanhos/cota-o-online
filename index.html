@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cotação Online APRO+ BRASIL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .logo {
+            max-width: 180px;
+            margin-right: 20px;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+        }
+        h1 {
+            margin: 0;
+            font-weight: 700;
+            color: #e67e22; /* Cor do botão Calcular Cotação */
+        }
+        h3 {
+            margin-top: 30px;
+            font-size: 1.3em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #2c3e50;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            border-color: #f1c40f;
+            box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.25);
+            outline: none;
+        }
+        .currency-input {
+            padding-left: 30px;
+        }
+        .currency-symbol {
+            position: absolute;
+            left: 10px;
+            top: 38px;
+            color: #555;
+        }
+        button {
+            background: linear-gradient(to bottom, #f1c40f, #e67e22);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: linear-gradient(to bottom, #f39c12, #d35400);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+        }
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #e8f4fc;
+            border-radius: 8px;
+            display: none;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .result h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            text-align: left;
+        }
+        .result-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .result-item strong {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .highlight {
+            background-color: #fff3cd !important;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+            position: relative;
+            z-index: 1;
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+        .tab-container {
+            margin-top: 30px;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: -1px;
+            flex-wrap: wrap;
+        }
+        .tab-button {
+            padding: 12px 20px;
+            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+            border: 1px solid #ddd;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            color: #000;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            min-width: 150px;
+            margin: 0 2px;
+        }
+        .tab-button:hover {
+            background: linear-gradient(to bottom, #ffffff, #f1f3f5);
+        }
+        .tab-button.active {
+            background: white;
+            border-bottom: 1px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+        .tab-content {
+            display: none;
+            padding: 25px;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 0;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #777;
+            font-size: 12px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .form-group {
+                min-width: 100%;
+            }
+            table {
+                font-size: 12px;
+            }
+            .tab-buttons {
+                flex-direction: column;
+            }
+            .tab-button {
+                border-radius: 0;
+                margin-bottom: 2px;
+            }
+            .tab-button:first-child {
+                border-radius: 8px 8px 0 0;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .logo {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+    
+        .tab-content h3 {
+            background: linear-gradient(to right, #f2f2f2, #ffffff);
+            padding: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            color: #000;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 4px solid #f1c40f;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f0f0f0;
+        }
+        tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        
+        tr {
+            transition: all 0.3s ease;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        #calcButton {
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="images/logo_apro_sem_fundo.png" alt="APRO+ BRASIL Logo" class="logo">
+            <h1>Sistema de Cotação Online APRO+ BRASIL</h1>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="vehicleType">Tipo de Veículo:</label>
+                <select id="vehicleType" onchange="changeVehicleType()">
+                    <option value="passeio">Automóvel Passeio</option>
+                    <option value="diesel">Automóvel a Diesel</option>
+                    <option value="importado">Automóvel Importado</option>
+                    <option value="moto_nacional">Motocicleta Nacional</option>
+                    <option value="moto_importada">Motocicleta Importada</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="fipeValue">Valor FIPE do Veículo:</label>
+                <span class="currency-symbol">R$</span>
+                <input type="text" id="fipeValue" class="currency-input" placeholder="0,00">
+            </div>
+        </div>
+        
+        <div class="form-row" id="planRow">
+            <div class="form-group">
+                <label for="planType">Tipo de Plano:</label>
+                <select id="planType">
+                    <option value="total">Plano Total</option>
+                    <option value="intermediario">Plano Intermediário</option>
+                    <option value="roubo">Plano Roubo e Furto</option>
+                </select>
+            </div>
+        </div>
+        
+        <button id="calcButton" onclick="calculateQuote()">CALCULAR COTAÇÃO</button>
+        
+        <div id="result" class="result">
+            <h2>Resultado da Cotação</h2>
+            <div id="resultContent"></div>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button id="passeioBtn" class="tab-button active" onclick="openTab(event, 'passeio')">Automóvel Passeio</button>
+                <button id="dieselBtn" class="tab-button" onclick="openTab(event, 'diesel')">Automóvel Diesel</button>
+                <button id="importadoBtn" class="tab-button" onclick="openTab(event, 'importado')">Automóvel Importado</button>
+                <button id="moto_nacionalBtn" class="tab-button" onclick="openTab(event, 'moto_nacional')">Moto Nacional</button>
+                <button id="moto_importadaBtn" class="tab-button" onclick="openTab(event, 'moto_importada')">Moto Importada</button>
+            </div>
+            
+            <div id="passeio" class="tab-content active">
+                <h3>Tabela de Referência - Automóvel Passeio</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valor FIPE</th>
+                            <th>Adesão</th>
+                            <th>Plano Total</th>
+                            <th>Intermediário</th>
+                            <th>Roubo e Furto</th>
+                            <th>Participação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="passeioTable">
+                        <!-- Preenchido por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="diesel" class="tab-content">
+                <h3>Tabela de Referência - Automóvel Diesel</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valor FIPE</th>
+                            <th>Adesão</th>
+                            <th>Plano Total</th>
+                            <th>Intermediário</th>
+                            <th>Roubo e Furto</th>
+                            <th>Participação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dieselTable">
+                        <!-- Preenchido por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="importado" class="tab-content">
+                <h3>Tabela de Referência - Automóvel Importado</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valor FIPE</th>
+                            <th>Adesão</th>
+                            <th>Plano Total</th>
+                            <th>Intermediário</th>
+                            <th>Roubo e Furto</th>
+                            <th>Participação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="importadoTable">
+                        <!-- Preenchido por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="moto_nacional" class="tab-content">
+                <h3>Tabela de Referência - Motocicleta Nacional</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valor FIPE</th>
+                            <th>Adesão</th>
+                            <th>Plano Total</th>
+                            <th>Intermediário</th>
+                            <th>Roubo e Furto</th>
+                            <th>Participação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="motoNacionalTable">
+                        <!-- Preenchido por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="moto_importada" class="tab-content">
+                <h3>Tabela de Referência - Motocicleta Importada</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Valor FIPE</th>
+                            <th>Adesão</th>
+                            <th>Plano Total</th>
+                            <th>Intermediário</th>
+                            <th>Roubo e Furto</th>
+                            <th>Participação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="motoImportadaTable">
+                        <!-- Preenchido por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            © 2025 - Criado por Banhos Copyright - Todos os direitos reservados
+        </div>
+    </div>
+
+    <script>
+        // Dados das tabelas de referência
+        const priceTables = {
+            passeio: [
+                { min: 0, max: 10000, adesao: 250, total: 105, intermediario: 85, roubo: 75, participacao: 'R$ 1.000,00' },
+                { min: 10001, max: 15000, adesao: 250, total: 113, intermediario: 95, roubo: 85, participacao: 'R$ 1.200,00' },
+                { min: 15001, max: 20000, adesao: 300, total: 121, intermediario: 105, roubo: 95, participacao: 'R$ 1.400,00' },
+                { min: 20001, max: 25000, adesao: 300, total: 129, intermediario: 115, roubo: 105, participacao: 'R$ 1.600,00' },
+                { min: 25001, max: 30000, adesao: 300, total: 137, intermediario: 125, roubo: 115, participacao: '6%' },
+                { min: 30001, max: 35000, adesao: 350, total: 153, intermediario: 133, roubo: 125, participacao: '6%' },
+                { min: 35001, max: 40000, adesao: 350, total: 161, intermediario: 140, roubo: 130, participacao: '6%' },
+                { min: 40001, max: 45000, adesao: 350, total: 169, intermediario: 150, roubo: 140, participacao: '6%' },
+                { min: 45001, max: 50000, adesao: 400, total: 177, intermediario: 160, roubo: 150, participacao: '6%' },
+                { min: 50001, max: 55000, adesao: 400, total: 195, intermediario: 175, roubo: 160, participacao: '6%' },
+                { min: 55001, max: 60000, adesao: 450, total: 210, intermediario: 185, roubo: 170, participacao: '6%' },
+                { min: 60001, max: 65000, adesao: 550, total: 250, intermediario: 230, roubo: 190, participacao: '6%' },
+                { min: 65001, max: 70000, adesao: 550, total: 260, intermediario: 240, roubo: 210, participacao: '6%' },
+                { min: 70001, max: 75000, adesao: 600, total: 300, intermediario: 270, roubo: 239, participacao: '6%' },
+                { min: 75001, max: 80000, adesao: 600, total: 310, intermediario: 280, roubo: 249, participacao: '6%' },
+                { min: 80001, max: 85000, adesao: 650, total: 320, intermediario: 290, roubo: 259, participacao: '6%' },
+                { min: 85001, max: 90000, adesao: 650, total: 330, intermediario: 300, roubo: 269, participacao: '6%' },
+                { min: 90001, max: 95000, adesao: 700, total: 340, intermediario: 310, roubo: 279, participacao: '6%' },
+                { min: 95001, max: 100000, adesao: 700, total: 352, intermediario: 320, roubo: 289, participacao: '6%' },
+                { min: 100001, max: 105000, adesao: 750, total: 372, intermediario: 335, roubo: 299, participacao: '6%' },
+                { min: 105001, max: 110000, adesao: 750, total: 392, intermediario: 345, roubo: 309, participacao: '6%' },
+                { min: 110001, max: 115000, adesao: 800, total: 402, intermediario: 353, roubo: 320, participacao: '6%' },
+                { min: 115001, max: 120000, adesao: 800, total: 412, intermediario: 363, roubo: 333, participacao: '6%' },
+                { min: 120001, max: 125000, adesao: 850, total: 428, intermediario: 373, roubo: 343, participacao: '6%' },
+                { min: 125001, max: 130000, adesao: 850, total: 440, intermediario: 385, roubo: 355, participacao: '6%' },
+                { min: 130001, max: 135000, adesao: 900, total: 450, intermediario: 395, roubo: 370, participacao: '6%' },
+                { min: 135001, max: 140000, adesao: 900, total: 460, intermediario: 405, roubo: 380, participacao: '6%' },
+                { min: 140001, max: 145000, adesao: 950, total: 470, intermediario: 415, roubo: 390, participacao: '6%' },
+                { min: 145001, max: 150000, adesao: 950, total: 480, intermediario: 425, roubo: 400, participacao: '6%' },
+                { min: 150001, max: 155000, adesao: 1000, total: 490, intermediario: 430, roubo: 415, participacao: '6%' },
+                { min: 155001, max: 160000, adesao: 1000, total: 500, intermediario: 450, roubo: 425, participacao: '6%' },
+                { min: 160001, max: 165000, adesao: 1050, total: 510, intermediario: 470, roubo: 445, participacao: '6%' },
+                { min: 165001, max: 170000, adesao: 1050, total: 530, intermediario: 490, roubo: 460, participacao: '6%' },
+                { min: 170001, max: 175000, adesao: 1150, total: 545, intermediario: 500, roubo: 470, participacao: '6%' },
+                { min: 175001, max: 180000, adesao: 1250, total: 560, intermediario: 510, roubo: 480, participacao: '6%' }
+            ],
+            diesel: [
+                { min: 0, max: 20000, adesao: 350, total: 150, intermediario: 130, roubo: 110, participacao: 'R$ 1.500,00' },
+                { min: 20001, max: 30000, adesao: 400, total: 170, intermediario: 150, roubo: 130, participacao: 'R$ 1.800,00' },
+                { min: 30001, max: 40000, adesao: 450, total: 190, intermediario: 170, roubo: 150, participacao: '6%' },
+                { min: 40001, max: 50000, adesao: 500, total: 210, intermediario: 190, roubo: 170, participacao: '6%' },
+                { min: 50001, max: 60000, adesao: 550, total: 230, intermediario: 210, roubo: 190, participacao: '6%' },
+                { min: 60001, max: 70000, adesao: 600, total: 280, intermediario: 260, roubo: 230, participacao: '6%' },
+                { min: 70001, max: 80000, adesao: 650, total: 330, intermediario: 300, roubo: 270, participacao: '6%' },
+                { min: 80001, max: 90000, adesao: 700, total: 350, intermediario: 320, roubo: 290, participacao: '6%' },
+                { min: 90001, max: 100000, adesao: 750, total: 370, intermediario: 340, roubo: 310, participacao: '6%' },
+                { min: 100001, max: 110000, adesao: 800, total: 410, intermediario: 370, roubo: 330, participacao: '6%' },
+                { min: 110001, max: 120000, adesao: 850, total: 430, intermediario: 390, roubo: 350, participacao: '6%' },
+                { min: 120001, max: 130000, adesao: 900, total: 450, intermediario: 410, roubo: 370, participacao: '6%' },
+                { min: 130001, max: 140000, adesao: 950, total: 470, intermediario: 430, roubo: 390, participacao: '6%' },
+                { min: 140001, max: 150000, adesao: 1000, total: 490, intermediario: 450, roubo: 410, participacao: '6%' },
+                { min: 150001, max: 160000, adesao: 1050, total: 510, intermediario: 470, roubo: 430, participacao: '6%' },
+                { min: 160001, max: 170000, adesao: 1100, total: 530, intermediario: 490, roubo: 450, participacao: '6%' },
+                { min: 170001, max: 180000, adesao: 1150, total: 550, intermediario: 510, roubo: 470, participacao: '6%' },
+                { min: 180001, max: 190000, adesao: 1200, total: 570, intermediario: 530, roubo: 490, participacao: '6%' },
+                { min: 190001, max: 200000, adesao: 1250, total: 590, intermediario: 550, roubo: 510, participacao: '6%' }
+            ],
+            importado: [
+                { min: 0, max: 30000, adesao: 400, total: 180, intermediario: 160, roubo: 140, participacao: 'R$ 2.000,00' },
+                { min: 30001, max: 40000, adesao: 450, total: 200, intermediario: 180, roubo: 160, participacao: 'R$ 2.500,00' },
+                { min: 40001, max: 50000, adesao: 500, total: 220, intermediario: 200, roubo: 180, participacao: '8%' },
+                { min: 50001, max: 60000, adesao: 550, total: 240, intermediario: 220, roubo: 200, participacao: '8%' },
+                { min: 60001, max: 70000, adesao: 600, total: 290, intermediario: 270, roubo: 240, participacao: '8%' },
+                { min: 70001, max: 80000, adesao: 650, total: 340, intermediario: 310, roubo: 280, participacao: '8%' },
+                { min: 80001, max: 90000, adesao: 700, total: 360, intermediario: 330, roubo: 300, participacao: '8%' },
+                { min: 90001, max: 100000, adesao: 750, total: 380, intermediario: 350, roubo: 320, participacao: '8%' },
+                { min: 100001, max: 110000, adesao: 800, total: 420, intermediario: 380, roubo: 340, participacao: '8%' },
+                { min: 110001, max: 120000, adesao: 850, total: 440, intermediario: 400, roubo: 360, participacao: '8%' },
+                { min: 120001, max: 130000, adesao: 900, total: 460, intermediario: 420, roubo: 380, participacao: '8%' },
+                { min: 130001, max: 140000, adesao: 950, total: 480, intermediario: 440, roubo: 400, participacao: '8%' },
+                { min: 140001, max: 150000, adesao: 1000, total: 500, intermediario: 460, roubo: 420, participacao: '8%' },
+                { min: 150001, max: 160000, adesao: 1050, total: 520, intermediario: 480, roubo: 440, participacao: '8%' },
+                { min: 160001, max: 170000, adesao: 1100, total: 540, intermediario: 500, roubo: 460, participacao: '8%' },
+                { min: 170001, max: 180000, adesao: 1150, total: 560, intermediario: 520, roubo: 480, participacao: '8%' },
+                { min: 180001, max: 190000, adesao: 1200, total: 580, intermediario: 540, roubo: 500, participacao: '8%' },
+                { min: 190001, max: 200000, adesao: 1250, total: 600, intermediario: 560, roubo: 520, participacao: '8%' },
+                { min: 200001, max: 210000, adesao: 1300, total: 620, intermediario: 580, roubo: 540, participacao: '8%' },
+                { min: 210001, max: 220000, adesao: 1350, total: 640, intermediario: 600, roubo: 560, participacao: '8%' }
+            ],
+            moto_nacional: [
+                { min: 0, max: 5000, adesao: 250, total: 90, intermediario: 80, roubo: 70, participacao: 'R$ 600,00' },
+                { min: 5001, max: 10000, adesao: 250, total: 100, intermediario: 90, roubo: 85, participacao: 'R$ 700,00' },
+                { min: 10001, max: 15000, adesao: 300, total: 110, intermediario: 100, roubo: 90, participacao: 'R$ 900,00' },
+                { min: 15001, max: 20001, adesao: 300, total: 160, intermediario: 140, roubo: 115, participacao: 'R$ 1.000,00' },
+                { min: 20001, max: 25000, adesao: 400, total: 180, intermediario: 160, roubo: 130, participacao: 'R$ 1.200,00' },
+                { min: 25001, max: 30000, adesao: 400, total: 205, intermediario: 190, roubo: 150, participacao: 'R$ 1.500,00' },
+                { min: 30001, max: 35000, adesao: 400, total: 230, intermediario: 210, roubo: 170, participacao: 'R$ 2.000,00' },
+                { min: 35001, max: 40000, adesao: 450, total: 255, intermediario: 230, roubo: 190, participacao: 'R$ 2.200,00' },
+                { min: 40001, max: 45000, adesao: 500, total: 280, intermediario: 255, roubo: 210, participacao: 'R$ 2.500,00' },
+                { min: 45001, max: 50000, adesao: 550, total: 305, intermediario: 280, roubo: 230, participacao: 'R$ 3.000,00' }
+            ],
+            moto_importada: [
+                { min: 0, max: 5000, adesao: 250, total: 90, intermediario: 80, roubo: 70, participacao: 'R$ 1.000,00' },
+                { min: 5001, max: 10000, adesao: 250, total: 100, intermediario: 90, roubo: 85, participacao: 'R$ 1.200,00' },
+                { min: 10001, max: 15000, adesao: 300, total: 110, intermediario: 100, roubo: 90, participacao: 'R$ 1.300,00' },
+                { min: 15001, max: 20001, adesao: 300, total: 160, intermediario: 140, roubo: 115, participacao: 'R$ 1.500,00' },
+                { min: 20001, max: 25000, adesao: 400, total: 180, intermediario: 160, roubo: 130, participacao: 'R$ 1.800,00' },
+                { min: 25001, max: 30000, adesao: 400, total: 205, intermediario: 190, roubo: 150, participacao: 'R$ 2.000,00' },
+                { min: 30001, max: 35000, adesao: 400, total: 230, intermediario: 210, roubo: 170, participacao: 'R$ 2.500,00' },
+                { min: 35001, max: 40000, adesao: 450, total: 255, intermediario: 230, roubo: 190, participacao: 'R$ 3.000,00' },
+                { min: 40001, max: 45000, adesao: 500, total: 280, intermediario: 255, roubo: 210, participacao: 'R$ 3.500,00' },
+                { min: 45001, max: 50000, adesao: 550, total: 305, intermediario: 280, roubo: 230, participacao: 'R$ 4.000,00' }
+            ]
+        };
+        
+        // Função para formatar valores monetários
+        function formatCurrency(value) {
+            return 'R$ ' + value.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+        
+        // Função para converter string monetária em número
+        function parseCurrency(value) {
+            if (!value) return 0;
+            return parseFloat(value.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, ''));
+        }
+        
+        // Função para formatar faixas de valores
+        function formatRange(min, max) {
+            if (min === 0) return `Até ${formatCurrency(max)}`;
+            return `De ${formatCurrency(min)} até ${formatCurrency(max)}`;
+        }
+        
+        // Preencher tabelas de referência
+        function populateReferenceTables() {
+            for (const vehicleType in priceTables) {
+                const tableBody = document.getElementById(`${vehicleType}Table`);
+                if (!tableBody) {
+                    console.error(`Tabela não encontrada para ${vehicleType}`);
+                    continue;
+                }
+                
+                tableBody.innerHTML = '';
+                
+                priceTables[vehicleType].forEach(range => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-min', range.min);
+                    row.setAttribute('data-max', range.max);
+                    
+                    row.innerHTML = `
+                        <td>${formatRange(range.min, range.max)}</td>
+                        <td>${formatCurrency(range.adesao)}</td>
+                        <td>${formatCurrency(range.total)}</td>
+                        <td>${formatCurrency(range.intermediario)}</td>
+                        <td>${formatCurrency(range.roubo)}</td>
+                        <td>${range.participacao}</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+        
+        // Função para mudar o tipo de veículo e atualizar a tabela correspondente
+        function changeVehicleType() {
+            const vehicleType = document.getElementById('vehicleType').value;
+            
+            // Removido o código que ocultava o campo de plano para motos
+            // Agora o campo de plano sempre fica visível para todos os tipos de veículos
+            
+            // Simular clique no botão da tabela correspondente
+            document.getElementById(`${vehicleType}Btn`).click();
+        }
+        
+        // Função para abrir abas
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+            
+            // Preencher a tabela correspondente
+            if (tabName === 'moto_nacional') {
+                const tableBody = document.getElementById('motoNacionalTable');
+                tableBody.innerHTML = '';
+                priceTables.moto_nacional.forEach(range => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-min', range.min);
+                    row.setAttribute('data-max', range.max);
+                    row.innerHTML = `
+                        <td>${formatRange(range.min, range.max)}</td>
+                        <td>${formatCurrency(range.adesao)}</td>
+                        <td>${formatCurrency(range.total)}</td>
+                        <td>${formatCurrency(range.intermediario)}</td>
+                        <td>${formatCurrency(range.roubo)}</td>
+                        <td>${range.participacao}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else if (tabName === 'moto_importada') {
+                const tableBody = document.getElementById('motoImportadaTable');
+                tableBody.innerHTML = '';
+                priceTables.moto_importada.forEach(range => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-min', range.min);
+                    row.setAttribute('data-max', range.max);
+                    row.innerHTML = `
+                        <td>${formatRange(range.min, range.max)}</td>
+                        <td>${formatCurrency(range.adesao)}</td>
+                        <td>${formatCurrency(range.total)}</td>
+                        <td>${formatCurrency(range.intermediario)}</td>
+                        <td>${formatCurrency(range.roubo)}</td>
+                        <td>${range.participacao}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            // Verificar se há um valor FIPE inserido e destacar a linha correspondente
+            const fipeValueInput = document.getElementById('fipeValue').value;
+            if (fipeValueInput) {
+                const fipeValue = parseCurrency(fipeValueInput);
+                highlightTableRow(fipeValue, tabName.replace('moto_', 'moto_'));
+            }
+        }
+        
+        // Função principal de cálculo
+        function calculateQuote() {
+            const vehicleType = document.getElementById('vehicleType').value;
+            const fipeValueInput = document.getElementById('fipeValue').value;
+            const fipeValue = parseCurrency(fipeValueInput);
+            const planType = document.getElementById('planType').value; // Removida a condição especial para motos
+            
+            // Validar entrada
+            if (isNaN(fipeValue) || fipeValue <= 0) {
+                alert('Por favor, insira um valor FIPE válido.');
+                return;
+            }
+            
+            // Determinar tabela de preços
+            const priceRanges = priceTables[vehicleType];
+            
+            // Encontrar a faixa de preço correspondente
+            let selectedRange = null;
+            for (const range of priceRanges) {
+                if (fipeValue >= range.min && fipeValue <= range.max) {
+                    selectedRange = range;
+                    break;
+                }
+            }
+            
+            // Se o valor for acima do máximo na tabela, usar o último intervalo
+            if (!selectedRange && fipeValue > priceRanges[priceRanges.length - 1].max) {
+                selectedRange = priceRanges[priceRanges.length - 1];
+            }
+            
+            if (!selectedRange) {
+                alert('Valor FIPE fora da faixa suportada para este tipo de veículo.');
+                return;
+            }
+            
+            // Determinar valores conforme o plano selecionado
+            let adesao = selectedRange.adesao;
+            let mensalidade;
+            
+            switch(planType) {
+                case 'total':
+                    mensalidade = selectedRange.total;
+                    break;
+                case 'intermediario':
+                    mensalidade = selectedRange.intermediario;
+                    break;
+                case 'roubo':
+                    mensalidade = selectedRange.roubo;
+                    break;
+                default:
+                    mensalidade = selectedRange.total;
+            }
+            
+            // Mostrar resultados
+            const resultDiv = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
+            
+            let planName = '';
+            switch(planType) {
+                case 'total': planName = 'Plano Total'; break;
+                case 'intermediario': planName = 'Plano Intermediário'; break;
+                case 'roubo': planName = 'Plano Roubo e Furto'; break;
+            }
+            
+            resultContent.innerHTML = `
+                <div class="result-item">
+                    <strong>Tipo de Veículo:</strong>
+                    <span>${document.getElementById('vehicleType').options[document.getElementById('vehicleType').selectedIndex].text}</span>
+                </div>
+                <div class="result-item">
+                    <strong>Valor FIPE:</strong>
+                    <span>${formatCurrency(fipeValue)}</span>
+                </div>
+                <div class="result-item">
+                    <strong>Plano Selecionado:</strong>
+                    <span>${planName}</span>
+                </div>
+                <hr>
+                <div class="result-item">
+                    <strong>Valor de Adesão:</strong>
+                    <span>${formatCurrency(adesao)}</span>
+                </div>
+                <div class="result-item">
+                    <strong>Mensalidade:</strong>
+                    <span>${formatCurrency(mensalidade)}</span>
+                </div>
+                <div class="result-item">
+                    <strong>Participação:</strong>
+                    <span>${selectedRange.participacao}</span>
+                </div>
+            `;
+            
+            resultDiv.style.display = 'block';
+            
+            // Destacar linha correspondente na tabela
+            highlightTableRow(fipeValue, vehicleType);
+            
+            // Simular clique no botão da tabela correspondente para mostrar a tabela correta
+            document.getElementById(`${vehicleType}Btn`).click();
+        }
+        
+        // Destacar a linha da tabela correspondente ao valor FIPE
+        function highlightTableRow(fipeValue, vehicleType) {
+            // Remover destaque anterior
+            document.querySelectorAll('tbody tr').forEach(row => {
+                row.classList.remove('highlight');
+            });
+            
+            // Obter a tabela ativa
+            const activeTab = document.querySelector('.tab-content.active');
+            if (!activeTab) return;
+            
+            const rows = activeTab.querySelectorAll('tbody tr');
+            
+            // Verificar cada linha para encontrar a correspondente ao valor FIPE
+            rows.forEach(row => {
+                const min = parseInt(row.getAttribute('data-min'));
+                const max = parseInt(row.getAttribute('data-max'));
+                
+                if (fipeValue >= min && fipeValue <= max) {
+                    row.classList.add('highlight');
+                    // Removido o scroll para a linha destacada
+                }
+            });
+        }
+        
+        // Máscara para o campo de valor monetário
+        function setupCurrencyMask() {
+            const input = document.getElementById('fipeValue');
+            
+            input.addEventListener('keyup', function(e) {
+                let value = this.value.replace(/\D/g, '');
+                if (value === '') {
+                    this.value = '';
+                    return;
+                }
+                
+                value = (parseInt(value) / 100).toFixed(2) + '';
+                value = value.replace(".", ",");
+                value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                this.value = value;
+                
+                // Atualizar destaque na tabela em tempo real
+                const vehicleType = document.getElementById('vehicleType').value;
+                const fipeValue = parseCurrency(this.value);
+                if (fipeValue > 0) {
+                    highlightTableRow(fipeValue, vehicleType);
+                }
+            });
+        }
+        
+        // Inicializar quando a página carregar
+        window.onload = function() {
+            populateReferenceTables();
+            setupCurrencyMask();
+            
+            // Corrigir problema com as tabelas de motocicletas
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    setTimeout(function() {
+                        populateReferenceTables();
+                        
+                        // Verificar se há um valor FIPE inserido e destacar a linha correspondente
+                        const fipeValueInput = document.getElementById('fipeValue').value;
+                        if (fipeValueInput) {
+                            const fipeValue = parseCurrency(fipeValueInput);
+                            const vehicleType = document.getElementById('vehicleType').value;
+                            highlightTableRow(fipeValue, vehicleType);
+                        }
+                    }, 100);
+                });
+            });
+            
+            // Adicionar evento para atualizar destaque quando o valor FIPE mudar
+            document.getElementById('fipeValue').addEventListener('input', function() {
+                const fipeValue = parseCurrency(this.value);
+                if (fipeValue > 0) {
+                    const vehicleType = document.getElementById('vehicleType').value;
+                    highlightTableRow(fipeValue, vehicleType);
+                }
+            });
+        };
+    </script>
+</body>
+</html>
